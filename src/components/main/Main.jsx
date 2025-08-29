@@ -35,7 +35,7 @@ export default function main() {
 
   const theme = useTheme();
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(false) ;
 
   const handleClickOpen = () => {
     setOpen(true);
