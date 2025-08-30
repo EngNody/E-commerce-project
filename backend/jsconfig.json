@@ -1,0 +1,21 @@
+// {
+//   "compilerOptions": {
+//     "moduleResolution": "nodenext",
+//     "target": "ES2021",
+//     "checkJs": true,
+//     "allowJs": true
+//   }
+// }
+
+// *******************seed.js*******************
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    // the most important code
+    "resolveJsonModule": true,
+    // *************************
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  }
+}
