@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -24,13 +24,15 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { Close } from "@mui/icons-material";
 import ProductDetails from "./ProductDetails";
+import { useGetProductByNameQuery } from "../../Redux/Product";
 // import { Scale } from "@mui/icons-material";
 
 export default function main() {
   const [alignment, setAlignment] = React.useState("left");
 
-  const handleAlignment = (event, newAlignment) => {
-    setAlignment(newAlignment);
+  const handleAlignment = (event, newValue) => {
+    setAlignment(newValue);
+    setmyDate(newValue)
   };
 
   const theme = useTheme();
@@ -45,7 +47,47 @@ export default function main() {
     setOpen(false);
   };
 
-  return (
+
+
+
+const allProductsAPI = 'products?populate=*'
+const menCategoryAPI = 'products?populate=*&filters[category][$eq]=men'
+const womenCategoryAPI = 'products?populate=*&filters[category][$eq]=women'
+
+
+  const [myDate, setmyDate] = useState(allProductsAPI);
+
+
+
+    const { data, error, isLoading } = useGetProductByNameQuery(myDate)
+
+if(data){
+  console.log(data.data);
+
+}
+
+if(isLoading){
+  return(
+    <Typography variant="h6" textAlign={"center"} my={10}>
+      Loading...............
+    </Typography>
+  )
+}
+
+if(error){
+  return(
+    <Typography variant="h6" textAlign={"center"} my={10}>
+       {error.
+// @ts-ignore
+       message}
+    </Typography>
+  )
+}
+
+
+
+if(data){
+    return (
     <Container sx={{ my: 9 }}>
       <Stack
         gap={3}
@@ -64,7 +106,7 @@ export default function main() {
         <Box>
           <ToggleButtonGroup
             color="error"
-            value={alignment}
+            value={myDate}
             exclusive
             onChange={handleAlignment}
             aria-label="text alignment"
@@ -79,14 +121,14 @@ export default function main() {
             <ToggleButton
               sx={{ color: theme.palette.text.primary }}
               className="myButton"
-              value="left"
+              value={allProductsAPI}
               aria-label="left aligned"
             >
               All Products
             </ToggleButton>
             <ToggleButton
               className="myButton"
-              value="center"
+              value={menCategoryAPI}
               aria-label="centered"
               sx={{ mx: "16px !important", color: theme.palette.text.primary }}
             >
@@ -95,7 +137,7 @@ export default function main() {
             <ToggleButton
               sx={{ color: theme.palette.text.primary }}
               className="myButton"
-              value="right"
+              value={womenCategoryAPI}
               aria-label="right aligned"
             >
               Women Category
@@ -109,8 +151,10 @@ export default function main() {
         flexWrap={"wrap"}
         justifyContent={"space-around"}
       >
-        {["aaa", "bbb", "ccc"].map((item) => {
+   
+        {data.data.map((item) => {
           return (
+            
             <Card
               key={item}
               sx={{
@@ -122,8 +166,12 @@ export default function main() {
             >
               <CardMedia
                 sx={{ height: 270 }}
-                image="static/images/cards/contemplative-reptile.jpg"
-                title="green iguana"
+                // image="static/images/cards/contemplative-reptile.jpg"
+                // @ts-ignore
+                image={`${import.meta.env.VITE_BASE_URL}${item.productimg[0].url}`}
+                // image={`http://localhost:1337${item.productimg[0].url}`}
+                // title="green iguana"
+                title={item.productTitle}
               />
               <CardContent>
                 <Stack
@@ -132,17 +180,16 @@ export default function main() {
                   alignItems={"center"}
                 >
                   <Typography gutterBottom variant="h6" component={"div"}>
-                    T-shirt
+                    {item.productTitle}
                   </Typography>
 
                   <Typography variant="subtitle1" component={"p"}>
-                    $12.99
+                    {item.productPrice}
                   </Typography>
                 </Stack>
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  Lizards are a widespread group of squamate reptiles, with over
-                  6,000 species, ranging across all continents except Antarctica
-                </Typography>
+                 {item.productDescription}
+                 </Typography>
               </CardContent>
 
               <CardActions
@@ -161,9 +208,9 @@ export default function main() {
 
                 <Rating
                   name="read-only"
-                  value={4.5}
+                  value={item.productRate}
                   readOnly
-                  precision={0.5}
+                  // precision={0.5}
                   size="small"
                 />
               </CardActions>
@@ -216,4 +263,7 @@ export default function main() {
 
     </Container>
   );
+}
+
+
 }
